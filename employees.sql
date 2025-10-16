@@ -1,0 +1,1 @@
+SELECT * FROM cmp_dakuhn employees;

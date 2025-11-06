@@ -94,16 +94,17 @@ group by p.playerID order by sum(s.salary) desc limit 1 ;
 -- 11. Find the number of players per team who earned a salary that year.
 -- Your Query:
 
-select s.yearID,  count(s.playerID) , s.teamID from salaries s 
+select s.yearID, count(s.playerID), s.teamID from salaries s 
 where s.salary > 0 
-group by s.yearID,s.teamID
-;
+group by s.yearID, s.teamID;
 
 -- 12. List each team’s total home runs and total runs for a given season.
 -- (Use GROUP BY teamID, yearID and aggregate both R and HR)
 -- Your Query:
 
-
+select yearID, teamID,sum(R) as runs,sum(HR) as Homeruns from batting 
+group by teamID, yearID
+having SUM(R) > 0 and SUM(HR) > 0 ;
 
 -- ============================================================
 -- ⚾ USING HAVING
@@ -113,30 +114,45 @@ group by s.yearID,s.teamID
 -- (Use HAVING SUM(R) > 800 after grouping)
 -- Your Query:
 
+select yearID, teamID, SUM(R) as runs from teams
+group by yearID, teamID
+having SUM(R) > 800;
 
 -- 14. List franchises that have won more than 5000 total games across all years.
 -- (Use SUM(W) and GROUP BY franchID, HAVING SUM(W) > 5000)
 -- Your Query:
 
+select franchID, SUM(W) as totalWins from teams
+group by franchID
+having SUM(W) > 5000;
 
 -- 15. Find players who have appeared in more than 150 games in a single season.
 -- (Use appearances with GROUP BY playerID, yearID and HAVING SUM(G_all) > 150)
 -- Your Query:
 
+select p.playerID, nameFirst, nameLast, f.yearID, SUM(G) as g_all from people p
+inner join fielding f on f.playerID = p.playerID
+group by p.playerID, f.yearID
+having SUM(G) > 150;
 
 -- 16. Show all teams that had more than 90 wins and fewer than 60 losses in any season.
 -- (Use HAVING SUM(W) > 90 AND SUM(L) < 60)
 -- Your Query:
 
+select yearID, teamID, SUM(W) as Wins, SUM(L) as Losses from teams
+group by yearID, teamID
+having SUM(W) > 90 and SUM(L) < 60;
 
 -- ============================================================
 -- ⚾ MULTI-TABLE + AGGREGATION CHALLENGES
 -- ============================================================
 
--- 17. Find the total postseason wins and losses for each franchise.
--- (Use seriespost, join to teams and teamsfranchises, group by franchName, sum wins and losses)
--- Your Query:
 
+select tf.franchName, SUM(wins) as totalWins, SUM(losses) as totalLosses from seriespost s
+inner join teams t on s.yearID = t.yearID
+inner join teamsfranchises tf on tf.franchID = t.franchID
+group by franchName
+having SUM(wins) > 0 and SUM(losses) > 0;
 
 -- 18. Find the average ERA per franchise across all years.
 -- (Join teams with teamsfranchises, group by franchName, and AVG(ERA))
@@ -155,4 +171,4 @@ group by s.yearID,s.teamID
 
 -- ============================================================
 -- END OF EXERCISE FILE
--- ============================================================
+-- ===========================================================

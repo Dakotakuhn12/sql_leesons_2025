@@ -147,21 +147,30 @@ having SUM(W) > 90 and SUM(L) < 60;
 -- ⚾ MULTI-TABLE + AGGREGATION CHALLENGES
 -- ============================================================
 
+-- 17. Find the total postseason wins and losses for each franchise.
+-- (Use seriespost, join to teams and teamsfranchises, group by franchName, sum wins and losses)
+-- Your Query:
 
-select tf.franchName, SUM(wins) as totalWins, SUM(losses) as totalLosses from seriespost s
-inner join teams t on s.yearID = t.yearID
-inner join teamsfranchises tf on tf.franchID = t.franchID
-group by franchName
-having SUM(wins) > 0 and SUM(losses) > 0;
+select franchName, sum(sp.wins), sum(sp.losses) from teamsfranchises tf
+inner join teams t on t.franchID = tf.franchID
+inner join seriespost sp on (sp.teamIdWinner = t.teamId or sp.teamIdLoser = t.teamId) and t.yearId = sp.yearId
+group by franchName;
 
 -- 18. Find the average ERA per franchise across all years.
 -- (Join teams with teamsfranchises, group by franchName, and AVG(ERA))
 -- Your Query:
 
+select franchName, AVG(ERA) from teams t
+inner join teamsfranchises tf on t.franchID = tf.franchID
+group by franchName;
+
 
 -- 19. List all teams whose total attendance is above the league average for that year.
 -- (Use a subquery to find league averages per year; compare using HAVING)
 -- Your Query:
+
+select attendance, lgID from teams t
+
 
 
 -- 20. Determine which franchises have the most Hall of Fame players.
